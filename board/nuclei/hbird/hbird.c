@@ -14,7 +14,10 @@
 
 int board_init(void)
 {
-	/* For now nothing to do here. */
-
+	/* Set Pinmux to enable QSPI2 for SD boot */
+	writel (0xec000000, 0x10012008);
+	writel (0x10000000, 0x10012004);
+	writel (0xfc030000, 0x10012038);
+	printf ("Hummingbird Platform Initialized\n");
 	return 0;
 }

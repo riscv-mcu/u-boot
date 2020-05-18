@@ -35,6 +35,8 @@ DEBUG_UART_FUNCS
 
 #endif
 
+static int sbi_tty_pending_char = -1;
+
 static int sbi_tty_put(struct udevice *dev, const char ch)
 {
 
@@ -46,10 +48,17 @@ static int sbi_tty_put(struct udevice *dev, const char ch)
 static int sbi_tty_get(struct udevice *dev)
 {
 	int c;
-
-	c = sbi_console_getchar();
-	if (c < 0)
-		return -EAGAIN;
+	if (sbi_tty_pending_char != -1)
+	{
+		c = sbi_tty_pending_char;
+		sbi_tty_pending_char = -1;
+	}
+	else
+	{
+		c = sbi_console_getchar();
+		if (c < 0)
+			return -EAGAIN;
+	}
 
 	return c;
 }
@@ -61,6 +70,15 @@ static int sbi_tty_setbrg(struct udevice *dev, int baudrate)
 
 static int sbi_tty_pending(struct udevice *dev, bool input)
 {
+	int c;
+	if (input)
+	{
+		c = sbi_console_getchar();
+		if(c < 0)
+			return 0;
+		sbi_tty_pending_char = c;
+		return 1;
+	}
 	return 0;
 }
 

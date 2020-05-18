@@ -49,8 +49,16 @@
     ranges;
   };
 
+	hfclk: hfclk {
+		#clock-cells = <0>;
+		compatible = "fixed-clock";
+		clock-frequency = <8000000>;
+		clock-output-names = "hfclk";
+	};
+
   console {
-       compatible = "sbi,console";
+		u-boot,dm-pre-reloc;
+		compatible = "sbi,console";
   };
 
   plic0: interrupt-controller@8000000 {
@@ -68,7 +76,7 @@
         reg = <0x0 0x10013000 0x0 0x1000>;
         interrupt-parent = <&plic0>;
         interrupts = <4>;
-        status = "okay";
+        status = "disabled";
 	};
 
 	uart1: serial@10023000 {
@@ -78,4 +86,47 @@
         interrupts = <5>;
         status = "okay";
 	};
+
+		qspi0: spi@10014000 {
+			compatible = "sifive,spi0";
+			reg = <0x0 0x10014000 0x0 0x1000>;
+			#interrupt-parent = <&plic0>;
+			#interrupts = <51>;
+			clocks = <&hfclk>;
+			num-cs = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+
+			flash@0 {
+				compatible = "gd25q32", "jedec,spi-nor";
+				reg = <0>;
+				spi-max-frequency = <1000000>;
+		//		m25p,fast-read;
+				#spi-tx-bus-width = <1>;
+				#spi-rx-bus-width = <1>;
+			};
+		};
+
+		qspi2: spi@10034000 {
+			compatible = "sifive,spi0";
+			reg = <0x0 0x10034000 0x0 0x1000>;
+			#interrupt-parent = <&plic0>;
+			#interrupts = <6>;
+			clocks = <&hfclk>;
+			num-cs = <1>;
+			#address-cells = <1>;
+			#size-cells = <0>;
+			status = "okay";
+
+			mmc@0 {
+				compatible = "mmc-spi-slot";
+				reg = <0>;
+				spi-max-frequency = <1000000>;
+				voltage-ranges = <3300 3300>;
+				disable-wp;
+			};
+		};
+
+
 };
