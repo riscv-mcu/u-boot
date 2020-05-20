@@ -388,12 +388,20 @@ config DEBUG_UART_MTK
 	  driver will be available until the real driver model serial is
 	  running.
 
+
+config DEBUG_UART_RISCV_SBI
+    bool "RISC-V SBI CONSOLE"
+    depends on RISCV_SBI_CONSOLE
+    help
+      Select this to enable a debug UART using RISC-V SBI console driver.
+
 endchoice
 
 config DEBUG_UART_BASE
 	hex "Base address of UART"
 	depends on DEBUG_UART
 	default 0 if DEBUG_UART_SANDBOX
+	default 0 if DEBUG_UART_RISCV_SBI
 	help
 	  This is the base address of your UART for memory-mapped UARTs.
 
@@ -404,6 +412,7 @@ config DEBUG_UART_CLOCK
 	int "UART input clock"
 	depends on DEBUG_UART
 	default 0 if DEBUG_UART_SANDBOX
+	default 0 if DEBUG_UART_RISCV_SBI
 	help
 	  The UART input clock determines the speed of the internal UART
 	  circuitry. The baud rate is derived from this by dividing the input
@@ -480,6 +489,14 @@ config ALTERA_JTAG_UART_BYPASS
 	  once the JTAG terminal is connected. Without the bypass, the console
 	  output will wait forever until a JTAG terminal is connected. If you
 	  not are sure, say Y.
+
+config RISCV_SBI_CONSOLE
+	bool "RISC-V SBI console support"
+	depends on RISCV
+	help
+	  This enables support for console via RISC-V SBI calls.
+
+	  If you don't know what do to here, say Y.
 
 config ALTERA_UART
 	bool "Altera UART support"
