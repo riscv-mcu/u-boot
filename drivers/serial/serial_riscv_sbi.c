@@ -73,6 +73,9 @@ static int sbi_tty_pending(struct udevice *dev, bool input)
 	int c;
 	if (input)
 	{
+		if (sbi_tty_pending_char != -1)
+			return 1;
+
 		c = sbi_console_getchar();
 		if(c < 0)
 			return 0;
