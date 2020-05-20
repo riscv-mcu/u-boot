@@ -101,4 +101,5 @@ U_BOOT_DRIVER(serial_riscv_sbi) = {
 	.id	= UCLASS_SERIAL,
 	.of_match = serial_riscv_sbi_ids,
 	.ops	= &serial_riscv_sbi_ops,
+	.flags	= DM_FLAG_PRE_RELOC,
 };
